@@ -1,26 +1,10 @@
 import { useState } from 'react'
 import '../App.css'
+import { useData } from '../store/DataContext'
 import type { SchoolDoc } from '../types'
 
-const seedDocs: SchoolDoc[] = [
-  {
-    id: 'd1',
-    name: 'IEP 2024-2025',
-    type: 'IEP',
-    date: '2025-02-01',
-    notes: 'Focus on executive functioning supports',
-  },
-  {
-    id: 'd2',
-    name: '504 Plan',
-    type: '504',
-    date: '2024-09-10',
-    notes: 'Extended time and sensory breaks',
-  },
-]
-
 export function SchoolDocs() {
-  const [docs, setDocs] = useState<SchoolDoc[]>(seedDocs)
+  const { docs, addDoc } = useData()
   const [form, setForm] = useState({
     name: '',
     type: 'IEP',
@@ -28,16 +12,13 @@ export function SchoolDocs() {
     notes: '',
   })
 
-  const addDoc = (e: React.FormEvent) => {
+  const handleAddDoc = (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name) return
-    setDocs((prev) => [
-      {
-        id: crypto.randomUUID(),
-        ...form,
-      },
-      ...prev,
-    ])
+    addDoc({
+      id: crypto.randomUUID(),
+      ...form,
+    })
     setForm({ name: '', type: 'IEP', date: '', notes: '' })
   }
 
@@ -53,7 +34,7 @@ export function SchoolDocs() {
       </div>
 
       <div className="section">
-        <form className="form" onSubmit={addDoc}>
+        <form className="form" onSubmit={handleAddDoc}>
           <div className="field">
             <label htmlFor="name">Document title</label>
             <input

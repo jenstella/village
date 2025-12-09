@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import './App.css'
+import { DataProvider } from './store/DataContext'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import Appointments from './pages/Appointments'
@@ -21,8 +22,9 @@ function App() {
   const [isAuthed, setIsAuthed] = useState(false)
 
   return (
-    <Layout>
-      <Routes>
+    <DataProvider>
+      <Layout>
+        <Routes>
         <Route
           path="/login"
           element={
@@ -74,8 +76,9 @@ function App() {
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+        </Routes>
+      </Layout>
+    </DataProvider>
   )
 }
 

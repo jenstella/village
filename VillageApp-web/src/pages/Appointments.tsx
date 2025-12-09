@@ -1,30 +1,11 @@
 import { useState } from 'react'
 import '../App.css'
+import { useData } from '../store/DataContext'
 import type { Appointment } from '../types'
 
-const seedAppointments: Appointment[] = [
-  {
-    id: '1',
-    title: 'OT Session',
-    date: '2025-03-15',
-    time: '3:30 PM',
-    provider: 'Oak Therapy Center',
-    location: 'Clinic',
-    notes: 'Focus on sensory diet updates',
-  },
-  {
-    id: '2',
-    title: 'School Meeting',
-    date: '2025-03-22',
-    time: '9:00 AM',
-    provider: 'Ms. Lopez',
-    location: 'Elementary School',
-    notes: 'Review accommodations for transitions',
-  },
-]
-
 export function Appointments() {
-  const [items, setItems] = useState<Appointment[]>(seedAppointments)
+  const { appointments, addAppointment } = useData()
+  const items = appointments
   const [form, setForm] = useState({
     title: '',
     date: '',
@@ -34,14 +15,14 @@ export function Appointments() {
     notes: '',
   })
 
-  const addAppointment = (e: React.FormEvent) => {
+  const handleAddAppointment = (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title || !form.date) return
     const next: Appointment = {
       ...form,
       id: crypto.randomUUID(),
     }
-    setItems((prev) => [next, ...prev])
+    addAppointment(next)
     setForm({
       title: '',
       date: '',
@@ -64,7 +45,7 @@ export function Appointments() {
       </div>
 
       <div className="section">
-        <form className="form" onSubmit={addAppointment}>
+        <form className="form" onSubmit={handleAddAppointment}>
           <div className="field">
             <label htmlFor="title">Title</label>
             <input

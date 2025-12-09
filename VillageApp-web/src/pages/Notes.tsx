@@ -1,28 +1,10 @@
 import { useState } from 'react'
 import '../App.css'
+import { useData } from '../store/DataContext'
 import type { Note } from '../types'
 
-const seedNotes: Note[] = [
-  {
-    id: 'n1',
-    title: 'Recess incident follow-up',
-    date: '2025-03-05',
-    category: 'School',
-    summary: 'Discussed peer conflict; teacher will monitor transitions.',
-    actionItems: 'Check-in after recess, share calming strategies.',
-  },
-  {
-    id: 'n2',
-    title: 'OT home practice',
-    date: '2025-03-02',
-    category: 'Home',
-    summary: 'Heavy work before homework improved focus.',
-    actionItems: 'Keep 10-minute routine before seated tasks.',
-  },
-]
-
 export function Notes() {
-  const [notes, setNotes] = useState<Note[]>(seedNotes)
+  const { notes, addNote } = useData()
   const [form, setForm] = useState({
     title: '',
     date: '',
@@ -31,16 +13,13 @@ export function Notes() {
     actionItems: '',
   })
 
-  const addNote = (e: React.FormEvent) => {
+  const handleAddNote = (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title) return
-    setNotes((prev) => [
-      {
-        id: crypto.randomUUID(),
-        ...form,
-      },
-      ...prev,
-    ])
+    addNote({
+      id: crypto.randomUUID(),
+      ...form,
+    })
     setForm({
       title: '',
       date: '',
@@ -62,7 +41,7 @@ export function Notes() {
       </div>
 
       <div className="section">
-        <form className="form" onSubmit={addNote}>
+        <form className="form" onSubmit={handleAddNote}>
           <div className="field">
             <label htmlFor="note-title">Title</label>
             <input
