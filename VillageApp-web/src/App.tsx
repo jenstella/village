@@ -4,7 +4,9 @@ import './App.css'
 import { DataProvider } from './store/DataContext'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
+import { Calendar } from './pages/Calendar'
 import Appointments from './pages/Appointments'
+import Medications from './pages/Medications'
 import SchoolDocs from './pages/SchoolDocs'
 import Notes from './pages/Notes'
 import AIHelper from './pages/AIHelper'
@@ -44,10 +46,26 @@ function App() {
           }
         />
         <Route
+          path="/calendar"
+          element={
+            <Protected isAuthed={isAuthed}>
+              <Calendar />
+            </Protected>
+          }
+        />
+        <Route
           path="/appointments"
           element={
             <Protected isAuthed={isAuthed}>
               <Appointments />
+            </Protected>
+          }
+        />
+        <Route
+          path="/medications"
+          element={
+            <Protected isAuthed={isAuthed}>
+              <Medications />
             </Protected>
           }
         />

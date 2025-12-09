@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import '../App.css'
-import type { Appointment, SchoolDoc, Note } from '../types'
+import type { Appointment, SchoolDoc, Note, Medication } from '../types'
 
 type WidgetProps = {
   title: string
   to: string
-  accent: 'blue' | 'purple' | 'teal' | 'amber'
-  items: Appointment[] | SchoolDoc[] | Note[]
-  renderItem: (item: Appointment | SchoolDoc | Note) => React.ReactNode
+  accent: 'blue' | 'purple' | 'teal' | 'amber' | 'green'
+  items: Appointment[] | SchoolDoc[] | Note[] | Medication[]
+  renderItem: (item: Appointment | SchoolDoc | Note | Medication) => React.ReactNode
   emptyMessage: string
   actionLabel: string
   actionTo: string
@@ -18,6 +18,7 @@ const accents: Record<WidgetProps['accent'], string> = {
   purple: '#a78bfa',
   teal: '#2dd4bf',
   amber: '#fbbf24',
+  green: '#10b981',
 }
 
 export function Widget({
@@ -52,7 +53,7 @@ export function Widget({
         ) : (
           <div className="widget-items">
             {displayItems.map((item, idx) => (
-              <div key={(item as Appointment | SchoolDoc | Note).id || idx} className="widget-item">
+              <div key={(item as Appointment | SchoolDoc | Note | Medication).id || idx} className="widget-item">
                 {renderItem(item)}
               </div>
             ))}

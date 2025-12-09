@@ -25,3 +25,25 @@ export type Note = {
   actionItems?: string
 }
 
+export type MedicationChangeType = 'started' | 'stopped' | 'increased' | 'decreased' | 'changed'
+
+export type MedicationChange = {
+  id: string
+  date: string
+  type: MedicationChangeType
+  dosage?: string
+  notes?: string
+}
+
+export type Medication = {
+  id: string
+  name: string
+  currentDosage?: string
+  frequency?: string
+  prescriber?: string
+  startDate?: string
+  endDate?: string
+  notes?: string
+  changes: MedicationChange[]
+}
+

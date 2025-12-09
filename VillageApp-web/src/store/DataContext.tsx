@@ -1,5 +1,11 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
-import type { Appointment, SchoolDoc, Note } from '../types'
+import type {
+  Appointment,
+  SchoolDoc,
+  Note,
+  Medication,
+  MedicationChange,
+} from '../types'
 
 const seedAppointments: Appointment[] = [
   {
@@ -58,6 +64,41 @@ const seedNotes: Note[] = [
   },
 ]
 
+const seedMedications: Medication[] = [
+  {
+    id: 'm1',
+    name: 'Adderall XR',
+    currentDosage: '20mg',
+    frequency: 'Once daily in morning',
+    prescriber: 'Dr. Johnson',
+    startDate: '2024-11-15',
+    notes: 'Take with food to reduce stomach upset',
+    changes: [
+      {
+        id: 'c1',
+        date: '2024-11-15',
+        type: 'started',
+        dosage: '10mg',
+        notes: 'Initial prescription',
+      },
+      {
+        id: 'c2',
+        date: '2024-12-01',
+        type: 'increased',
+        dosage: '15mg',
+        notes: 'Increased due to effectiveness',
+      },
+      {
+        id: 'c3',
+        date: '2025-01-10',
+        type: 'increased',
+        dosage: '20mg',
+        notes: 'Current stable dose',
+      },
+    ],
+  },
+]
+
 type DataContextType = {
   appointments: Appointment[]
   setAppointments: (appointments: Appointment[]) => void
@@ -68,6 +109,10 @@ type DataContextType = {
   notes: Note[]
   setNotes: (notes: Note[]) => void
   addNote: (note: Note) => void
+  medications: Medication[]
+  setMedications: (medications: Medication[]) => void
+  addMedication: (medication: Medication) => void
+  addMedicationChange: (medicationId: string, change: MedicationChange) => void
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
@@ -76,6 +121,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [appointments, setAppointments] = useState<Appointment[]>(seedAppointments)
   const [docs, setDocs] = useState<SchoolDoc[]>(seedDocs)
   const [notes, setNotes] = useState<Note[]>(seedNotes)
+  const [medications, setMedications] = useState<Medication[]>(seedMedications)
 
   const addAppointment = (appointment: Appointment) => {
     setAppointments((prev) => [appointment, ...prev])
@@ -87,6 +133,34 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const addNote = (note: Note) => {
     setNotes((prev) => [note, ...prev])
+  }
+
+  const addMedication = (medication: Medication) => {
+    setMedications((prev) => [medication, ...prev])
+  }
+
+  const addMedicationChange = (medicationId: string, change: MedicationChange) => {
+    setMedications((prev) =>
+      prev.map((med) => {
+        if (med.id === medicationId) {
+          const updatedChanges = [...med.changes, change]
+          // Update current dosage if it's an increase/decrease/change
+          let updatedDosage = med.currentDosage
+          if (change.dosage && ['increased', 'decreased', 'changed'].includes(change.type)) {
+            updatedDosage = change.dosage
+          }
+          // Update end date if stopped
+          const updatedEndDate = change.type === 'stopped' ? change.date : med.endDate
+          return {
+            ...med,
+            currentDosage: updatedDosage,
+            endDate: updatedEndDate,
+            changes: updatedChanges,
+          }
+        }
+        return med
+      })
+    )
   }
 
   return (
@@ -101,6 +175,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         notes,
         setNotes,
         addNote,
+        medications,
+        setMedications,
+        addMedication,
+        addMedicationChange,
       }}
     >
       {children}

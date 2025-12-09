@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom'
 import Widget from '../components/Widget'
 import { useData } from '../store/DataContext'
 import '../App.css'
-import type { Appointment, SchoolDoc, Note } from '../types'
+import type { Appointment, SchoolDoc, Note, Medication } from '../types'
 
 export function Dashboard() {
-  const { appointments, docs, notes } = useData()
+  const { appointments, docs, notes, medications } = useData()
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
@@ -41,6 +41,36 @@ export function Dashboard() {
                 </div>
                 {apt.provider && (
                   <div className="widget-item-subtitle">{apt.provider}</div>
+                )}
+              </>
+            )
+          }}
+        />
+        <Widget
+          title="Medications"
+          to="/medications"
+          accent="green"
+          items={medications}
+          emptyMessage="No medications tracked"
+          actionLabel="Add medication"
+          actionTo="/medications#new"
+          renderItem={(item) => {
+            const med = item as Medication
+            return (
+              <>
+                <div className="widget-item-title">{med.name}</div>
+                <div className="widget-item-meta">
+                  {med.currentDosage && (
+                    <span className="widget-tag" style={{ backgroundColor: '#10b98120', color: '#10b981' }}>
+                      {med.currentDosage}
+                    </span>
+                  )}
+                  {med.frequency && (
+                    <span className="widget-tag">{med.frequency}</span>
+                  )}
+                </div>
+                {med.prescriber && (
+                  <div className="widget-item-subtitle">Prescribed by: {med.prescriber}</div>
                 )}
               </>
             )
@@ -89,6 +119,34 @@ export function Dashboard() {
                 </div>
                 {note.summary && (
                   <div className="widget-item-subtitle">{note.summary}</div>
+                )}
+              </>
+            )
+          }}
+        />
+        <Widget
+          title="Calendar"
+          to="/calendar"
+          accent="teal"
+          items={appointments.filter((apt) => {
+            const aptDate = new Date(apt.date)
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
+            return aptDate >= today
+          })}
+          emptyMessage="No upcoming events"
+          actionLabel="View calendar"
+          actionTo="/calendar"
+          renderItem={(item) => {
+            const apt = item as Appointment
+            return (
+              <>
+                <div className="widget-item-title">{apt.title}</div>
+                <div className="widget-item-meta">
+                  {formatDate(apt.date)} {apt.time && `• ${apt.time}`}
+                </div>
+                {apt.provider && (
+                  <div className="widget-item-subtitle">{apt.provider}</div>
                 )}
               </>
             )
